@@ -154,7 +154,7 @@ def ensure_dir_is_templated(dirname):
         raise NonTemplatedInputDirException
 
 
-def generate_files(repo_dir, context=None, output_dir="."):
+def generate_files(repo_dir, context=None, output_dir=".", dump_params=False):
     """
     Renders the templates and saves them to files.
 
@@ -198,6 +198,13 @@ def generate_files(repo_dir, context=None, output_dir="."):
                 infile = os.path.join(root, f)
                 logging.debug("f is {0}".format(f))
                 generate_file(project_dir, infile, context, env)
+
+    # save the context to json in project root. called before hooks so this file 
+    # can be referenced.
+    if dump_params:
+        save_file = project_dir + '/cookiecutter.json'
+        with open(save_file, 'w') as outfile:
+            json.dump(context['cookiecutter'], outfile, indent=4)
 
     # run post-gen hook from repo_dir
     with work_in(repo_dir):

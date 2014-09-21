@@ -26,7 +26,7 @@ from .vcs import clone
 logger = logging.getLogger(__name__)
 
 
-def cookiecutter(input_dir, checkout=None, no_input=False, extra_context=None):
+def cookiecutter(input_dir, checkout=None, no_input=False, extra_context=None, dump_params=False):
     """
     API equivalent to using Cookiecutter at the command line.
 
@@ -71,9 +71,9 @@ def cookiecutter(input_dir, checkout=None, no_input=False, extra_context=None):
     # Create project from local context and project template.
     generate_files(
         repo_dir=repo_dir,
-        context=context
+        context=context,
+        dump_params=dump_params
     )
-
 
 def _get_parser():
     parser = argparse.ArgumentParser(
@@ -109,6 +109,11 @@ def _get_parser():
         action='store_true', default=False
     )
 
+    parser.add_argument(
+        '-d', '--dump-params',
+        help='Dumps context used to generate template to <project_root>/cookiecutter.json'
+    )
+
     return parser
 
 def parse_cookiecutter_args(args):
@@ -131,7 +136,7 @@ def main():
             level=logging.INFO
         )
 
-    cookiecutter(args.input_dir, args.checkout, args.no_input)
+    cookiecutter(args.input_dir, args.checkout, args.no_input, args.dump_params)
 
 
 if __name__ == '__main__':
